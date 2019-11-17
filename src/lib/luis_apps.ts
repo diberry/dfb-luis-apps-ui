@@ -11,11 +11,11 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async luisApps(): Promise<ILuisAppsDataTable> {
-
-    let list: ILuisApp[] = await LuisApps.getApps("b05c02f2e60a41e7b81aac571daf766e");
-
-    let columns: Array<ILuisDataTableAppColumn> = [{
+  static async getLuisApps(): Promise<ILuisApp[]> {
+    return await LuisApps.getApps(process.env.REACT_APP_LUIS_AUTHORING_KEY);
+  }
+  static getColumns(): Array<ILuisDataTableAppColumn> {
+    return [{
       Header: 'Id',
       accessor: 'id'
     }, {
@@ -28,11 +28,16 @@ export class LuisAppDataTable {
       Header: 'Date created',
       accessor: 'createdDateTime'
     }];
+  }
+  static async getDataTable(): Promise<ILuisAppsDataTable> {
+
+    const list: ILuisApp[] = await LuisAppDataTable.getLuisApps();
+    const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
 
     return {
       apps: list,
       columns: columns
     };
-  }
-};
+  };
+}
 

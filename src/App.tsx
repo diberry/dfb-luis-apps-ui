@@ -26,7 +26,7 @@
     };
 
     const getTableData = async () => {
-      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.luisApps();
+      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable();
       setTableData(tableData);
     } 
 
