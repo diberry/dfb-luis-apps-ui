@@ -11,8 +11,8 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async getLuisApps(): Promise<ILuisApp[]> {
-    return await LuisApps.getApps(process.env.REACT_APP_LUIS_AUTHORING_KEY);
+  static async getLuisApps(key: string): Promise<ILuisApp[]> {
+    return await LuisApps.getApps(key);
   }
   static getColumns(): Array<ILuisDataTableAppColumn> {
     return [{
@@ -29,9 +29,9 @@ export class LuisAppDataTable {
       accessor: 'createdDateTime'
     }];
   }
-  static async getDataTable(): Promise<ILuisAppsDataTable> {
+  static async getDataTable(key: string): Promise<ILuisAppsDataTable> {
 
-    const list: ILuisApp[] = await LuisAppDataTable.getLuisApps();
+    const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(key);
     const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
 
     return {

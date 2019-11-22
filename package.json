@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "dfb-luis-apps-lib": "1.0.0",
-    "@types/jest": "24.0.22",
     "@types/node": "12.12.6",
     "@types/react": "16.9.11",
     "@types/react-dom": "16.9.4",
@@ -23,7 +22,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build -wd",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "tslist": "tsc --listFiles",
+    "jslist": "jest --listfiles"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,6 +42,8 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^5.0.0"
+    "@types/jest": "^24.0.22",
+    "concurrently": "^5.0.0",
+    "ts-jest": "^24.1.0"
   }
 }
