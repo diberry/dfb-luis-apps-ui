@@ -3,12 +3,11 @@ module.exports = {
       "^.+\\.ts$": "ts-jest",
     },
     testMatch: [
-      "**/__tests__/**/*.[jt]s?(x)",
       "**/?(*.)+(spec|test).[jt]s?(x)"
     ],
     moduleDirectories: ["node_modules", "lib"],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    collectCoverageFrom: ['app/react/**/*.{ts,tsx}', '!app/react/__tests__/api/api-test-helpers.ts'],
+    collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}','!<rootDir>/node_modules/'],
     coverageDirectory: "./coverage",
     coverageReporters: ["json", "html", "text"],
     testEnvironment: 'node',

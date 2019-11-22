@@ -20,7 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build -wd",
-    "test": "react-scripts test",
+    "test": "react-scripts test --detectOpenHandles --coverage --watchAll",
     "eject": "react-scripts eject",
     "tslist": "tsc --listFiles",
     "jslist": "jest --listfiles"

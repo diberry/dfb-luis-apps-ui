@@ -12,6 +12,11 @@ export interface ILuisDataTableAppColumn {
 export class LuisAppDataTable {
 
   static async getLuisApps(key: string): Promise<ILuisApp[]> {
+
+    if(!key || key.length==0){
+      throw new Error("getLuisApps - invalid key");
+    }
+
     return await LuisApps.getApps(key);
   }
   static getColumns(): Array<ILuisDataTableAppColumn> {
@@ -30,14 +35,23 @@ export class LuisAppDataTable {
     }];
   }
   static async getDataTable(key: string): Promise<ILuisAppsDataTable> {
+    
+    try{
 
-    const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(key);
-    const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
+      if(!key || key.length==0){
+        throw new Error("getDataTable - invalid key");
+      }
 
-    return {
-      apps: list,
-      columns: columns
-    };
+      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(key);
+      const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
+
+      return {
+        apps: list,
+        columns: columns
+      };
+    } catch(err){
+      throw err;
+    }
   };
 }
 
