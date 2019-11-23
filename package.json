@@ -9,7 +9,7 @@
     "@types/react-table": "^6.8.5",
     "bootstrap": "^4.3.1",
     "csstype": "^2.6.7",
-    "dfb-luis-apps-lib": "^1.0.0",
+    "dfb-luis-apps-lib": "git://github.com/diberry/dfb-luis-apps-lib.git",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.11.0",
@@ -23,7 +23,8 @@
     "test": "react-scripts test --detectOpenHandles --coverage --watchAll",
     "eject": "react-scripts eject",
     "tslist": "tsc --listFiles",
-    "jslist": "jest --listfiles"
+    "jslist": "jest --listfiles",
+    "updateSnapshot": "npm test -- -u"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -42,7 +43,9 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.22",
+    "@types/react-test-renderer": "^16.9.1",
     "concurrently": "^5.0.0",
+    "react-test-renderer": "^16.12.0",
     "ts-jest": "^24.1.0"
   }
 }
