@@ -1,6 +1,7 @@
 import * as React from 'react';
 import AppInfo from './appInfo';
 import { ILuisAppsDataTable } from "../lib/luis_apps";
+import { FormLuisAuth } from './form_luis_auth';
 
 interface IProps {
   tableData: ILuisAppsDataTable
@@ -9,6 +10,8 @@ interface IProps {
 
 const Apps: React.FC<IProps> = (props: IProps) => (
   <>
+  <FormLuisAuth 
+  />
   <button
       onClick={() => props.onClick()}
     > Get apps 
