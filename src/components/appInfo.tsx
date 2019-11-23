@@ -21,6 +21,7 @@ const AppInfo: React.FC<IProps> = (props: IProps) => (
 <ReactTable
       data={props.tableData.apps}
       columns={props.tableData.columns}
+
     />
 
 

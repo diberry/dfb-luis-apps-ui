@@ -6,8 +6,7 @@ interface IProps {
   incrementBy: number;
   onClick: (count: number, incrementBy: number) => void;
 }
-
-const Description: React.FC<IProps> = (props: IProps) => (
+    /*  
     <div className="count" >
     <p>My favorite number is {props.count}, incrementing by {props.incrementBy}</p>
     <button 
@@ -16,6 +15,11 @@ const Description: React.FC<IProps> = (props: IProps) => (
     >
         Increase
     </button>
+  </div>
+  */
+const Description: React.FC<IProps> = (props: IProps) => (
+    <div className="description">
+
   </div>
 );
 

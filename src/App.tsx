@@ -1,17 +1,27 @@
   import React, { useState, useEffect } from 'react';
-  import logo from './logo.svg';
+  //import logo from './logo.svg';
   import './App.css';
 
   import Header from './components/header';
-  import Description from './components/description';
+  //import Description from './components/description';
   import Apps from './components/apps';
-  import Constants from './components/constants';
+  //import Constants from './components/constants';
   import { ILuisAppsDataTable, LuisAppDataTable, ILuisDataTableAppColumn  } from "./lib/luis_apps";
   import { LuisApps, ILuisApp } from 'dfb-luis-apps-lib';
+
+/*
+          <Description
+            buttonStatusColor={Constants.colors.candidate}
+            count={count}
+            incrementBy={increase} 
+            onClick={add} />
+            <div className="timer"> {secondsLeft}</div>
+*/
 
   const App: React.FC = () => {
 
     const emptyAppArr : ILuisApp[] = [];
+    const luis_key = process.env.REACT_APP_LUIS_AUTHORING_KEY || ""; 
 
     //initialize state
     const increase = 4;
@@ -21,55 +31,42 @@
 
     const [tableData, setTableData]= useState({apps: [] as ILuisApp[], columns: [] as ILuisDataTableAppColumn[]});
 
-    const add = (currentCount: number, bump: number): void => {
+    /*const add = (currentCount: number, bump: number): void => {
       setCount(currentCount + bump);
-    };
+    };*/
 
     const getTableData = async () => {
-      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable();
+      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(luis_key);
       setTableData(tableData);
     } 
 
     // look
     useEffect(() => {
-
+/*
       if(secondsLeft<=0) return;
 
-      const timerId = setTimeout(() => {
+      onst timerId = setTimeout(() => {
         setSecondsLeft(secondsLeft -1);
       },1000)
 
-      // clean side effect when no longer needed
+      
       return () => {
         clearTimeout(timerId);
-      }
+      }*/
     });
 
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <Header name={user} />
-            Edit <code>src/App.tsx</code> and save to reload.
           
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-          test
-          </a>
+          <Header name={user} />
+
           <Apps 
             onClick = {getTableData}
             tableData = {tableData}
           />
-          <Description
-            buttonStatusColor={Constants.colors.candidate}
-            count={count}
-            incrementBy={increase} 
-            onClick={add} />
-          <div className="timer">Time Remaining: {secondsLeft}</div>
+
+          
         </header>
         
       </div>
