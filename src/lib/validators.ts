@@ -62,13 +62,15 @@ export const isGuid32CharValidator = (
   values: IValues,
   fieldName: string,
   length: number
-): string =>
-  values[fieldName] === undefined ||
+): string => {
+  if (values[fieldName] === undefined ||
     values[fieldName] === null ||
-    values[fieldName] === "" ||
-    values[fieldName].length !== length
-    ? `This must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`
-    : "";
+    values[fieldName] === "" ) return  `This must be populated`; 
+  
+    if (values[fieldName].length !== length) return `This must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`;
+
+    return "";
+}
 
   /**
    * Returns whether there are any errors in the errors object that is passed in

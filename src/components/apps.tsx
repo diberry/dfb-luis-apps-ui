@@ -2,9 +2,9 @@ import * as React from 'react';
 import AppInfo from './appInfo';
 import { ILuisAppsDataTable } from "../lib/luis_apps";
 import { FormLuisAuth } from './form_luis_auth';
-import { Form, IFields } from "./form";
+import { Form, IFields } from "./form/form";
 import { requiredValidator, isGuid32CharValidator } from '../lib/validators';
-import { Field } from "./field";
+import { Field } from "./form/field";
 import { IValues, IErrors } from '../lib/validators';
 
 interface IProps {
