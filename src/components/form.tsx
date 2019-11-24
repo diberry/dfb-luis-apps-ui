@@ -1,5 +1,6 @@
 import * as React from "react";
 import { IFieldProps } from './field';
+import { IValues, IErrors } from '../lib/validators';
 
 export interface IFormContext extends IFormState {
   /* Function that allows values in the values state to be set */
@@ -30,17 +31,7 @@ interface IFormProps {
   render: () => React.ReactNode;
 
   /* A function used when the form is submitted */
-  submitFunction: any;
-}
-
-export interface IValues {
-  /* Key value pairs for all the field values with key being the field name */
-  [key: string]: any;
-}
-
-export interface IErrors {
-  /* The validation error messages for each field (key is the field name */
-  [key: string]: string;
+  submitFunction: (values: IValues) => Promise<any>;
 }
 
 export interface IFormState {
@@ -211,7 +202,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
    */
   private async submitForm(values: IValues): Promise<boolean> {
     try {
-      return await Promise.resolve(true);
+      return await this.props.submitFunction(values);
     } catch (ex) {
       return false;
     }

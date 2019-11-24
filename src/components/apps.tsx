@@ -2,23 +2,41 @@ import * as React from 'react';
 import AppInfo from './appInfo';
 import { ILuisAppsDataTable } from "../lib/luis_apps";
 import { FormLuisAuth } from './form_luis_auth';
+import { Form, IFields } from "./form";
+import { requiredValidator, isGuid32CharValidator } from '../lib/validators';
+import { Field } from "./field";
+import { IValues, IErrors } from '../lib/validators';
 
 interface IProps {
-  tableData: ILuisAppsDataTable
+  tableData: ILuisAppsDataTable;
   onClick: () => Promise<any>;
+  onSubmit: (values: IValues) => Promise<any>;
 }
+const fields: IFields = {
+  endpoint: {
+    id: "endpoint",
+    label: "LUIS Endpoint",
+    validation: { rule: requiredValidator }
+  },
+  key: {
+    id: "key",
+    label: "LUIS key",
+    validation: { rule: isGuid32CharValidator, args: 32 }
+  }
+};
 
-const Apps: React.FC<IProps> = (props: IProps) => (
-  <>
-  <FormLuisAuth 
-  />
-  <button
-      onClick={() => props.onClick()}
-    > Get apps 
-    </button>
-    <AppInfo tableData={props.tableData}/>
-  </>
+const Apps: React.FC<IProps> = (props: IProps) => {
 
-);
+return (  
+  <div>
+    <FormLuisAuth
+    submit={props.onSubmit}
+    />
+    {(props.tableData.apps.length>0) && <AppInfo tableData={props.tableData} />}
+
+    </div>
+)
+
+};
 
 export default Apps;

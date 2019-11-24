@@ -3,6 +3,11 @@ export interface IValues {
     [key: string]: any;
   }
 
+  export interface IErrors {
+    /* The validation error messages for each field (key is the field name */
+    [key: string]: string;
+  }
+
 /**
  * Validates whether a field has a value
  * @param {IValues} values - All the field values in the form
@@ -64,3 +69,17 @@ export const isGuid32CharValidator = (
     values[fieldName].length !== length
     ? `This must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`
     : "";
+
+  /**
+   * Returns whether there are any errors in the errors object that is passed in
+   * @param {IErrors} errors - The field errors
+   */
+export const haveErrors = (errors: IErrors) => {
+    let haveError: boolean = false;
+    Object.keys(errors).map((key: string) => {
+      if (errors[key].length > 0) {
+        haveError = true;
+      }
+    });
+    return haveError;
+  }

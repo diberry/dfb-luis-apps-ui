@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { IErrors, IFormContext, FormContext, IValues } from "./form";
+import { IFormContext, FormContext } from "./form";
+import { IValues, IErrors } from "../lib/validators";
 
 /* The available editors for the field */
 type Editor = "textbox" | "multilinetextbox" | "dropdown";
@@ -30,7 +31,7 @@ export interface IFieldProps {
     validation?: IValidation;
 }
 
-export const Field: React.SFC<IFieldProps> = ({
+export const Field: React.FC<IFieldProps> = ({
     id,
     label,
     editor,

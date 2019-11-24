@@ -64,6 +64,7 @@
           <Apps 
             onClick = {getTableData}
             tableData = {tableData}
+            onSubmit = {getTableData}
           />
 
           
