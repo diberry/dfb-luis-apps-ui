@@ -8,6 +8,7 @@
   //import Constants from './components/constants';
   import { ILuisAppsDataTable, LuisAppDataTable, ILuisDataTableAppColumn  } from "./lib/luis_apps";
   import { LuisApps, ILuisApp } from 'dfb-luis-apps-lib';
+import { IValues } from './lib/validators';
 
 /*
           <Description
@@ -21,7 +22,6 @@
   const App: React.FC = () => {
 
     const emptyAppArr : ILuisApp[] = [];
-    const luis_key = process.env.REACT_APP_LUIS_AUTHORING_KEY || ""; 
 
     //initialize state
     const increase = 4;
@@ -35,8 +35,8 @@
       setCount(currentCount + bump);
     };*/
 
-    const getTableData = async () => {
-      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(luis_key);
+    const getTableData = async (values: IValues):Promise<any> => {
+      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(values);
       setTableData(tableData);
     } 
 
@@ -62,7 +62,6 @@
           <Header name={user} />
 
           <Apps 
-            onClick = {getTableData}
             tableData = {tableData}
             onSubmit = {getTableData}
           />

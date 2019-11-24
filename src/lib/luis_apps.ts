@@ -1,4 +1,5 @@
 import { LuisApps, ILuisApp } from 'dfb-luis-apps-lib';
+import { IValues} from './validators';
 
 export interface ILuisAppsDataTable {
   apps: ILuisApp[],
@@ -11,10 +12,18 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async getLuisApps(key: string): Promise<ILuisApp[]> {
+  static async getLuisApps(endpoint: string, key: string): Promise<ILuisApp[]> {
 
-    if(!key || key.length==0){
-      throw new Error("getLuisApps - invalid key");
+    if(!key || key===undefined || key===null || key===""){
+      throw new Error("getLuisApps - empty key");
+    }
+
+    if(!endpoint || endpoint===undefined || endpoint===null || endpoint===""){
+      throw new Error("getLuisApps - empty endpoint");
+    }
+
+    if(key.length!==32){
+      throw new Error(`getLuisApps - expected key length 32, receieved ${key.length}`);
     }
 
     return await LuisApps.getApps(key);
@@ -34,15 +43,17 @@ export class LuisAppDataTable {
       accessor: 'createdDateTime'
     }];
   }
-  static async getDataTable(key: string): Promise<ILuisAppsDataTable> {
+  static async getDataTable(values: IValues): Promise<ILuisAppsDataTable> {
     
     try{
 
-      if(!key || key.length==0){
-        throw new Error("getDataTable - invalid key");
+      if(!values){
+        throw new Error("getDataTable - no values passed");
       }
 
-      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(key);
+      console.log(`values = ${JSON.stringify(values)}`);
+
+      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values.endpoint,values.key);
       const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
 
       return {

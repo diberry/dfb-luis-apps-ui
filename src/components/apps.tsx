@@ -9,7 +9,6 @@ import { IValues, IErrors } from '../lib/validators';
 
 interface IProps {
   tableData: ILuisAppsDataTable;
-  onClick: () => Promise<any>;
   onSubmit: (values: IValues) => Promise<any>;
 }
 const fields: IFields = {
