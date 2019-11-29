@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { IFormContext, FormContext } from "./form";
 import { IValues, IErrors } from "../../lib/validators";
+import { placeholder } from "@babel/types";
 
 /* The available editors for the field */
 type Editor = "textbox" | "multilinetextbox" | "dropdown";
@@ -29,11 +30,14 @@ export interface IFieldProps {
 
     /* The field validator function and argument */
     validation?: IValidation;
+
+    placeHolder?: string;
 }
 
 export const Field: React.FC<IFieldProps> = ({
     id,
     label,
+    placeHolder,
     editor,
     options,
     value
@@ -69,6 +73,7 @@ export const Field: React.FC<IFieldProps> = ({
                             type="text"
                             value={value}
                             style={getEditorStyle(context.errors)} 
+                            placeholder={placeHolder}
                             onChange={
                                 (e: React.FormEvent<HTMLInputElement>) =>
                                     context.setValues({ [id]: e.currentTarget.value })

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Form, IFields} from "./form/form";
 import { Field } from "./form/field";
 import { requiredValidator,  isGuid32CharValidator } from '../lib/validators';
-import { IValues, IErrors } from '../lib/validators';
+import { IValues } from '../lib/validators';
 
 interface IProps {
   submit: (values: IValues) => Promise<any>;
@@ -14,11 +14,13 @@ export const FormLuisAuth: React.FC<IProps> = (props: IProps) => {
         endpoint: {
           id: "endpoint",
           label: "LUIS Endpoint",
+          placeHolder: "https://your-authoring-resource-name.cognitiveservices.azure.com/",
           validation: { rule: requiredValidator }
         },
         key: {
           id: "key",
           label: "LUIS key",
+          placeHolder: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           validation: { rule: isGuid32CharValidator, args:32}
         }
       };
