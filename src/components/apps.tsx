@@ -26,15 +26,15 @@ const fields: IFields = {
 
 const Apps: React.FC<IProps> = (props: IProps) => {
 
-return (  
-  <div>
-    <FormLuisAuth
-    submit={props.onSubmit}
-    />
-    {(props.tableData.apps.length>0) && <AppInfo tableData={props.tableData} />}
-
+  return (
+    <div className="container">
+      <FormLuisAuth
+        submit={props.onSubmit}
+      />
+      <div>{props.tableData.apps.length} rows found</div>
+      {(props.tableData.apps.length > 0) && <AppInfo tableData={props.tableData} />}
     </div>
-)
+  )
 
 };
 

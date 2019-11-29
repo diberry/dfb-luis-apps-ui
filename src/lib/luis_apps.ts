@@ -12,21 +12,21 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async getLuisApps(endpoint: string, key: string): Promise<ILuisApp[]> {
+  static async getLuisApps(values: IValues): Promise<ILuisApp[]> {
 
-    if(!key || key===undefined || key===null || key===""){
-      throw new Error("getLuisApps - empty key");
+    if(!values.key || values.key===undefined || values.key===null || values.key===""){
+      throw new Error("getLuisApps - empty values.key");
     }
 
-    if(!endpoint || endpoint===undefined || endpoint===null || endpoint===""){
-      throw new Error("getLuisApps - empty endpoint");
+    if(!values.endpoint || values.endpoint===undefined || values.endpoint===null || values.endpoint===""){
+      throw new Error("getLuisApps - empty values.endpoint");
     }
 
-    if(key.length!==32){
-      throw new Error(`getLuisApps - expected key length 32, receieved ${key.length}`);
+    if(values.key.length!==32){
+      throw new Error(`getLuisApps - expected key length 32, receieved ${values.key.length}`);
     }
 
-    return await LuisApps.getApps(key);
+    return await LuisApps.getApps(values);
   }
   static getColumns(): Array<ILuisDataTableAppColumn> {
     return [{
@@ -53,7 +53,7 @@ export class LuisAppDataTable {
 
       console.log(`values = ${JSON.stringify(values)}`);
 
-      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values.endpoint,values.key);
+      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values);
       const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
 
       return {

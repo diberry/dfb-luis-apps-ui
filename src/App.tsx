@@ -36,6 +36,7 @@ import { IValues } from './lib/validators';
     };*/
 
     const getTableData = async (values: IValues):Promise<any> => {
+      setTableData({apps: [] as ILuisApp[], columns: [] as ILuisDataTableAppColumn[]});
       const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(values);
       setTableData(tableData);
     } 

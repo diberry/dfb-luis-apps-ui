@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IFieldProps } from './field';
-import { IValues, IErrors } from '../../lib/validators';
+import { IValues, IErrors} from '../../lib/validators';
 
 export interface IFormContext extends IFormState {
   /* Function that allows values in the values state to be set */
@@ -39,21 +39,26 @@ export interface IFormState {
   values: IValues;
 
   /* The field validation error messages */
-  errors: IErrors;
+  fieldValidationErrors: IErrors;
 
   /* Whether the form has been successfully submitted */
   submitSuccess?: boolean;
+
+  formSubmissionErrors: IErrors ;
 }
 
 export class Form extends React.Component<IFormProps, IFormState> {
   constructor(props: IFormProps) {
     super(props);
 
-    const errors: IErrors = {};
+    const formSubmissionErrors: IErrors  = {};
+    const fieldValidationErrors: IErrors  = {};
     const values: IValues = {};
+
     this.state = {
-      errors,
-      values
+      fieldValidationErrors,
+      values,
+      formSubmissionErrors 
     };
   }
 
@@ -72,11 +77,37 @@ export class Form extends React.Component<IFormProps, IFormState> {
   private haveErrors(errors: IErrors) {
     let haveError: boolean = false;
     Object.keys(errors).map((key: string) => {
-      if (errors[key].length > 0) {
+      if (errors[key] && errors[key].length > 0) {
         haveError = true;
+        console.log(`errors returned = ${JSON.stringify(errors)}`);
       }
     });
     return haveError;
+  }
+  
+
+  /**
+ * Returns error in the errors object that is passed in
+ * @param {IErrors} errors - The field errors
+ * @returns {String} errorMessage array
+ */
+  private getErrors(errors: IErrors) {
+    let errorMessage: string = "";
+
+    Object.values(errors).map((value: string) => {
+      if (value.length > 0) {
+        errorMessage += `${value}`;
+      }
+    });
+    return errorMessage;
+  }
+
+  /**
+   * Reset form submission state 
+   */
+  private resetFormSubmissionState(){
+    const formSubmissionErrors: IErrors  = {};
+    this.setState({ formSubmissionErrors });
   }
 
   /**
@@ -91,8 +122,15 @@ export class Form extends React.Component<IFormProps, IFormState> {
     console.log(this.state.values);
 
     if (this.validateForm()) {
-      const submitSuccess: boolean = await this.submitForm(this.state.values);
-      this.setState({ submitSuccess });
+      try {
+        const submitSuccess: boolean = await this.submitForm(this.state.values);
+        console.log(`handleSubmit ${submitSuccess}`);
+        this.setState({ submitSuccess });
+      } catch (err) {
+        console.log(`handleSubmit err ${JSON.stringify(err)}`);
+        const submitSuccess: boolean = false;
+        this.setState({ submitSuccess });
+      }
     }
   };
 
@@ -101,12 +139,12 @@ export class Form extends React.Component<IFormProps, IFormState> {
    * @returns {boolean} - Returns true if the form is valid
    */
   private validateForm(): boolean {
-    const errors: IErrors = {};
+    const fieldValidationErrors: IErrors = {};
     Object.keys(this.props.fields).map((fieldName: string) => {
-      errors[fieldName] = this.validate(fieldName);
+      fieldValidationErrors[fieldName] = this.validate(fieldName);
     });
-    this.setState({ errors });
-    return !this.haveErrors(errors);
+    this.setState({ fieldValidationErrors });
+    return !this.haveErrors(fieldValidationErrors);
   }
 
   /**
@@ -126,11 +164,21 @@ export class Form extends React.Component<IFormProps, IFormState> {
         fieldName,
         this.props.fields[fieldName].validation!.args
       );
+
+      // if resetting key or endpoint, reset formsubmission error too
+      const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = this.state;
+      if((fieldName === 'key' || fieldName ==='endpoint') 
+        && this.haveErrors(this.state.formSubmissionErrors)){
+        this.resetFormSubmissionState();
+      }
+
+      console.log(`validate 1 newError = ${JSON.stringify(newError)}`);
     }
-    this.state.errors[fieldName] = newError;
+    this.state.fieldValidationErrors[fieldName] = newError;
     this.setState({
-      errors: { ...this.state.errors, [fieldName]: newError }
+      fieldValidationErrors: { ...this.state.fieldValidationErrors, [fieldName]: newError }
     });
+    console.log(`validate 2 newError = ${JSON.stringify(newError)}`);
     return newError;
   };
 
@@ -140,14 +188,25 @@ export class Form extends React.Component<IFormProps, IFormState> {
    */
   private async submitForm(values: IValues): Promise<boolean> {
     try {
-      return await this.props.submitFunction(values);
+      const result = await this.props.submitFunction(values);
+      console.log(`submitForm result ${JSON.stringify(result)}`);
+      return result;
     } catch (ex) {
-      return false;
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      let errorMessage = ex.message;
+      //let errorMessageParsed = JSON.parse(errorMessage);
+
+      this.setState({
+        formSubmissionErrors: { ...this.state.formSubmissionErrors, ["HTTPResponse"]: errorMessage }
+      });
+      console.log(`submitForm error ${JSON.stringify(ex)}`);
+      throw ex;
     }
   }
 
   public render() {
-    const { submitSuccess, errors } = this.state;
+    console.log(`state = ${JSON.stringify(this.state)}`);
+    const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = this.state;
     const context: IFormContext = {
       ...this.state,
       setValues: this.setValues,
@@ -157,14 +216,13 @@ export class Form extends React.Component<IFormProps, IFormState> {
       <FormContext.Provider value={context}>
         <form onSubmit={this.handleSubmit} noValidate={true}>
           <div className="container">
-
             {this.props.render()}
 
             <div className="form-group">
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={this.haveErrors(errors)}
+                disabled={this.haveErrors(fieldValidationErrors)}
               >
                 Submit
             </button>
@@ -175,15 +233,15 @@ export class Form extends React.Component<IFormProps, IFormState> {
             </div>
             )}
             {submitSuccess === false &&
-              !this.haveErrors(errors) && (
-                <div className="alert alert-danger" role="alert">
-                  Sorry, an unexpected error has occurred
-              </div>
+              this.haveErrors(this.state.formSubmissionErrors) && (
+                <div className="alert alert-danger formSubmissionErrors" role="alert">
+                  {this.getErrors(this.state.formSubmissionErrors)}
+                </div>
               )}
             {submitSuccess === false &&
-              this.haveErrors(errors) && (
-                <div className="alert alert-danger" role="alert">
-                  Sorry, the form is invalid. Please review, adjust and try again
+              this.haveErrors(this.state.fieldValidationErrors) && (
+                <div className="alert alert-danger fieldValidationErrors" role="alert">
+                  {this.getErrors(this.state.fieldValidationErrors)}
               </div>
               )}
           </div>
