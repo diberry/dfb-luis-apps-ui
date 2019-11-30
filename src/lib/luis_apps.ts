@@ -1,4 +1,4 @@
-import { LuisApps, ILuisApp } from 'dfb-luis-apps-lib';
+import { LuisApps, ILuisApp, IFeatureFlags } from 'dfb-luis-apps-lib';
 import { IValues} from './validators';
 
 export interface ILuisAppsDataTable {
@@ -12,7 +12,7 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async getLuisApps(values: IValues): Promise<ILuisApp[]> {
+  static async getLuisApps(values: IValues, features: IFeatureFlags): Promise<ILuisApp[]> {
 
     if(!values.key || values.key===undefined || values.key===null || values.key===""){
       throw new Error("getLuisApps - empty values.key");
@@ -26,7 +26,7 @@ export class LuisAppDataTable {
       throw new Error(`getLuisApps - expected key length 32, receieved ${values.key.length}`);
     }
 
-    return await LuisApps.getApps(values);
+    return await LuisApps.getApps(values, features);
   }
   static getColumns(): Array<ILuisDataTableAppColumn> {
     return [{
@@ -38,12 +38,15 @@ export class LuisAppDataTable {
     }, {
       Header: 'Active version',
       accessor: 'activeVersion'
-    }, {
+    },{
+      Header: 'Versions',
+      accessor: 'versionsCount'
+    },{
       Header: 'Date created',
       accessor: 'createdDateTime'
     }];
   }
-  static async getDataTable(values: IValues): Promise<ILuisAppsDataTable> {
+  static async getDataTable(values: IValues, features: IFeatureFlags): Promise<ILuisAppsDataTable> {
     
     try{
 
@@ -53,7 +56,7 @@ export class LuisAppDataTable {
 
       console.log(`values = ${JSON.stringify(values)}`);
 
-      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values);
+      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values, features);
       const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getColumns();
 
       return {

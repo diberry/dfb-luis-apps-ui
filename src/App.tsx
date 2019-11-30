@@ -7,7 +7,7 @@
   import Apps from './components/apps';
   //import Constants from './components/constants';
   import { ILuisAppsDataTable, LuisAppDataTable, ILuisDataTableAppColumn  } from "./lib/luis_apps";
-  import { LuisApps, ILuisApp } from 'dfb-luis-apps-lib';
+  import { LuisApps, ILuisApp, IFeatureFlags } from 'dfb-luis-apps-lib';
 import { IValues } from './lib/validators';
 
 /*
@@ -37,7 +37,13 @@ import { IValues } from './lib/validators';
 
     const getTableData = async (values: IValues):Promise<any> => {
       setTableData({apps: [] as ILuisApp[], columns: [] as ILuisDataTableAppColumn[]});
-      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(values);
+
+      const features: IFeatureFlags = {
+        versions: true,
+        models: true,
+      };
+
+      const tableData:ILuisAppsDataTable  = await LuisAppDataTable.getDataTable(values, features);
       setTableData(tableData);
     } 
 
