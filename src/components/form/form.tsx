@@ -45,6 +45,8 @@ export interface IFormState {
   submitSuccess?: boolean;
 
   formSubmissionErrors: IErrors ;
+
+  formSubmissionStatus: string;
 }
 
 export class Form extends React.Component<IFormProps, IFormState> {
@@ -54,11 +56,13 @@ export class Form extends React.Component<IFormProps, IFormState> {
     const formSubmissionErrors: IErrors  = {};
     const fieldValidationErrors: IErrors  = {};
     const values: IValues = {};
+    const formSubmissionStatus: string ="";
 
     this.state = {
       fieldValidationErrors,
       values,
-      formSubmissionErrors 
+      formSubmissionErrors,
+      formSubmissionStatus 
     };
   }
 
@@ -110,6 +114,11 @@ export class Form extends React.Component<IFormProps, IFormState> {
     this.setState({ formSubmissionErrors });
   }
 
+
+  private setLoading(text: string){
+    const formSubmissionStatus = text;
+    this.setState({ formSubmissionStatus });
+  }
   /**
    * Handles form submission
    * @param {React.FormEvent<HTMLFormElement>} e - The form event
@@ -123,13 +132,16 @@ export class Form extends React.Component<IFormProps, IFormState> {
 
     if (this.validateForm()) {
       try {
+        this.setLoading("loading...");
         const submitSuccess: boolean = await this.submitForm(this.state.values);
         console.log(`handleSubmit ${submitSuccess}`);
         this.setState({ submitSuccess });
+        this.setLoading("");
       } catch (err) {
         console.log(`handleSubmit err ${JSON.stringify(err)}`);
         const submitSuccess: boolean = false;
         this.setState({ submitSuccess });
+        this.setLoading("");
       }
     }
   };
@@ -219,13 +231,15 @@ export class Form extends React.Component<IFormProps, IFormState> {
             {this.props.render()}
 
             <div className="form-group">
-              <button
+              {!this.state.formSubmissionStatus && <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={this.haveErrors(fieldValidationErrors)}
               >
                 Submit
-            </button>
+            </button>}
+            { this.state.formSubmissionStatus && 
+              <div>{this.state.formSubmissionStatus}</div>}
             </div>
             {submitSuccess && (
               <div className="alert alert-info" role="alert">
@@ -246,6 +260,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
               )}
           </div>
         </form>
+        <hr></hr>
       </FormContext.Provider>
     );
   }

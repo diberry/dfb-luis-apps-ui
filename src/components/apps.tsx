@@ -17,8 +17,11 @@ const Apps: React.FC<IProps> = (props: IProps) => {
       <FormLuisAuth
         submit={props.onSubmit}
       />
+      {props.tableData.apps.length > 0 && 
+      (
       <div>{props.tableData.apps.length} rows found</div>
-      {(props.tableData.apps.length > 0) && <AppInfo tableData={props.tableData} />}
+       && <AppInfo tableData={props.tableData} />
+       )}
     </div>
   )
 
