@@ -6,13 +6,27 @@ import { ILuisAppsDataTable } from "../../lib/luis_apps";
 interface IProps {
   tableData: ILuisAppsDataTable
 }
-const AppInfo: React.FC<IProps> = (props: IProps) => (
 
-  <ReactTable
-    data={props.tableData.apps}
-    columns={props.tableData.columns}
-  />
+const DataTableLuis: React.FC<IProps> = (props: IProps) => {
 
-);
+  return (
 
-export default AppInfo;
+    <div >
+      {
+
+        (props.tableData.apps.length > 0) &&
+
+        <ReactTable
+          data={props.tableData.apps}
+          columns={props.tableData.columns}
+        />
+
+      }
+
+    </div>
+
+
+  )
+};
+
+export default DataTableLuis;

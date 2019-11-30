@@ -2,7 +2,7 @@ import * as React from 'react';
 import AppInfo from './dataTable';
 import { ILuisAppsDataTable } from "../../lib/luis_apps";
 import { FormLuisAuth } from './form';
-import { IValues} from '../../lib/validators';
+import { IValues } from '../../lib/validators';
 
 interface IProps {
   tableData: ILuisAppsDataTable;
@@ -15,11 +15,8 @@ const Apps: React.FC<IProps> = (props: IProps) => {
       <FormLuisAuth
         submit={props.onSubmit}
       />
-      {props.tableData.apps.length > 0 && 
-      (
-      <div>{props.tableData.apps.length} rows found</div>
-       && <AppInfo tableData={props.tableData} />
-       )}
+      <AppInfo tableData={props.tableData} />
+
     </div>
   )
 
