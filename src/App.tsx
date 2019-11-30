@@ -1,6 +1,6 @@
   import React, { useState} from 'react';
   import './App.css';
-  import Apps from './components/apps';
+  import Apps from './components/apps/apps';
   import { ILuisAppsDataTable, LuisAppDataTable, ILuisDataTableAppColumn  } from "./lib/luis_apps";
   import { LuisApps, ILuisApp, IFeatureFlags } from 'dfb-luis-apps-lib';
 import { IValues } from './lib/validators';

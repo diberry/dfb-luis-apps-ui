@@ -1,10 +1,8 @@
 import * as React from 'react';
-import AppInfo from './appInfo';
-import { ILuisAppsDataTable } from "../lib/luis_apps";
-import { FormLuisAuth } from './form_luis_auth';
-import { IFields } from "./form/form";
-import { requiredValidator, isGuid32CharValidator } from '../lib/validators';
-import { IValues} from '../lib/validators';
+import AppInfo from './dataTable';
+import { ILuisAppsDataTable } from "../../lib/luis_apps";
+import { FormLuisAuth } from './form';
+import { IValues} from '../../lib/validators';
 
 interface IProps {
   tableData: ILuisAppsDataTable;
