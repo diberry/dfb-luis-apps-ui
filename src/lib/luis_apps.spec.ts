@@ -1,6 +1,6 @@
 import { LuisApps } from 'dfb-luis-apps-lib';
 import { LuisAppDataTable } from "./luis_apps";
-import { IValues } from './validators';
+import { IValues } from './values';
 
 jest.mock('dfb-luis-apps-lib');
 

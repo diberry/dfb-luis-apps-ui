@@ -21,6 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build -wd",
     "test": "react-scripts test --detectOpenHandles --coverage --watchAll",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
     "tslist": "tsc --listFiles",
     "jslist": "jest --listfiles",

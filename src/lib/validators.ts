@@ -1,12 +1,10 @@
-export interface IValues {
-    /* Key value pairs for all the field values with key being the field name */
-    [key: string]: any;
-  }
+import { IValues } from './values';
+
 
   export interface IErrors {
     /* The validation error messages for each field (key is the field name */
     [key: string]: string;
-  }  
+  }
 
 /**
  * Validates whether a field has a value
@@ -65,8 +63,8 @@ export const isGuid32CharValidator = (
 ): string => {
   if (values[fieldName] === undefined ||
     values[fieldName] === null ||
-    values[fieldName] === "" ) return  `This must be populated`; 
-  
+    values[fieldName] === "" ) return  `This must be populated`;
+
     if (values[fieldName].length !== length) return `This must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`;
 
     return "";

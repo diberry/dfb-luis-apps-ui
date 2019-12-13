@@ -1,6 +1,7 @@
 import * as React from "react";
 import { IFieldProps } from './field';
-import { IValues, IErrors} from '../../lib/validators';
+import { IErrors} from '../../lib/validators';
+import { IValues} from '../../lib/values';
 
 export interface IFormContext extends IFormState {
   /* Function that allows values in the values state to be set */
@@ -9,7 +10,7 @@ export interface IFormContext extends IFormState {
   /* Function that validates a field */
   validate: (fieldName: string) => void;
 }
-/* 
+/*
  * The context which allows state and functions to be shared with Field.
  * Note that we need to pass createContext a default value which is why undefined is unioned in the type
  */
@@ -62,7 +63,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
       fieldValidationErrors,
       values,
       formSubmissionErrors,
-      formSubmissionStatus 
+      formSubmissionStatus
     };
   }
 
@@ -88,7 +89,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
     });
     return haveError;
   }
-  
+
 
   /**
  * Returns error in the errors object that is passed in
@@ -107,7 +108,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
   }
 
   /**
-   * Reset form submission state 
+   * Reset form submission state
    */
   private resetFormSubmissionState(){
     const formSubmissionErrors: IErrors  = {};
@@ -179,7 +180,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
 
       // if resetting key or endpoint, reset formsubmission error too
       const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = this.state;
-      if((fieldName === 'key' || fieldName ==='endpoint') 
+      if((fieldName === 'key' || fieldName ==='endpoint')
         && this.haveErrors(this.state.formSubmissionErrors)){
         this.resetFormSubmissionState();
       }
@@ -195,7 +196,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
   };
 
   /**
-   * Submits the form 
+   * Submits the form
    * @returns {boolean} - Whether the form submission was successful or not
    */
   private async submitForm(values: IValues): Promise<boolean> {
@@ -238,7 +239,7 @@ export class Form extends React.Component<IFormProps, IFormState> {
               >
                 Submit
             </button>}
-            { this.state.formSubmissionStatus && 
+            { this.state.formSubmissionStatus &&
               <div>{this.state.formSubmissionStatus}</div>}
             </div>
             {submitSuccess && (

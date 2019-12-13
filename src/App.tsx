@@ -3,7 +3,7 @@ import './App.css';
 import Apps from './components/apps/apps';
 import { ILuisAppsDataTable, LuisAppDataTable, ILuisDataTableAppColumn } from "./lib/luis_apps";
 import { ILuisApp, IFeatureFlags } from 'dfb-luis-apps-lib';
-import { IValues } from './lib/validators';
+import { IValues } from './lib/values';
 
 const App: React.FC = () => {
 
@@ -16,7 +16,7 @@ const App: React.FC = () => {
       models: true,
     };
 
-    const tableData: ILuisAppsDataTable = await LuisAppDataTable.getDataTable(values, features);
+    const tableData: ILuisAppsDataTable = await LuisAppDataTable.getAppDataTable(values, features);
     setTableData(tableData);
   }
 

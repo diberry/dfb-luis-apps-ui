@@ -2,7 +2,7 @@ import * as React from 'react';
 import AppInfo from './dataTable';
 import { ILuisAppsDataTable } from "../../lib/luis_apps";
 import { FormLuisAuth } from './form';
-import { IValues } from '../../lib/validators';
+import { IValues } from '../../lib/values';
 
 interface IProps {
   tableData: ILuisAppsDataTable;
