@@ -1,5 +1,5 @@
 import { LuisApps, ILuisApp, IFeatureFlags } from 'dfb-luis-apps-lib';
-import { IValues } from './validators';
+import { IValues } from './values';
 import { Luis } from './luis_get';
 export interface ILuisAppsDataTable {
   apps: ILuisApp[],

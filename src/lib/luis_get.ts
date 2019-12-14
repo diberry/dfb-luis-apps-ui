@@ -1,9 +1,9 @@
 import { LuisApps, ILuisApp, IFeatureFlags, ILuisAppVersion } from 'dfb-luis-apps-lib';
-import { IValues} from './validators';
+import { IValues} from './values';
 
-  
+
 export class Luis {
-  
+
 static async getLuisApps(values: IValues, features: IFeatureFlags): Promise<ILuisApp[]> {
 
     if(!values.key || values.key===undefined || values.key===null || values.key===""){

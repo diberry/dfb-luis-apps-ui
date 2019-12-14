@@ -1,7 +1,8 @@
 import * as React from "react";
 
 import { IFormContext, FormContext } from "./form";
-import { IValues, IErrors } from "../../lib/validators";
+import { IErrors } from "../../lib/validators";
+import { IValues } from "../../lib/values";
 import { placeholder } from "@babel/types";
 
 /* The available editors for the field */
@@ -72,7 +73,7 @@ export const Field: React.FC<IFieldProps> = ({
                             id={id}
                             type="text"
                             value={value}
-                            style={getEditorStyle(context.errors)} 
+                            style={getEditorStyle(context.errors)}
                             placeholder={placeHolder}
                             onChange={
                                 (e: React.FormEvent<HTMLInputElement>) =>
@@ -87,7 +88,7 @@ export const Field: React.FC<IFieldProps> = ({
                         <textarea
                             id={id}
                             value={value}
-                            style={getEditorStyle(context.errors)} 
+                            style={getEditorStyle(context.errors)}
                             onChange={
                                 (e: React.FormEvent<HTMLTextAreaElement>) =>
                                     context.setValues({ [id]: e.currentTarget.value })
@@ -102,7 +103,7 @@ export const Field: React.FC<IFieldProps> = ({
                             id={id}
                             name={id}
                             value={value}
-                            style={getEditorStyle(context.errors)} 
+                            style={getEditorStyle(context.errors)}
                             onChange={
                                 (e: React.FormEvent<HTMLSelectElement>) =>
                                     context.setValues({ [id]: e.currentTarget.value })

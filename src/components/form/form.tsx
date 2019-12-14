@@ -1,15 +1,9 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { IFieldProps } from './field';
 import { IErrors} from '../../lib/validators';
 import { IValues} from '../../lib/values';
 
-export interface IFormContext extends IFormState {
-  /* Function that allows values in the values state to be set */
-  setValues: (values: IValues) => void;
 
-  /* Function that validates a field */
-  validate: (fieldName: string) => void;
-}
 /*
  * The context which allows state and functions to be shared with Field.
  * Note that we need to pass createContext a default value which is why undefined is unioned in the type
@@ -36,7 +30,7 @@ interface IFormProps {
 }
 
 export interface IFormState {
-  /* The field values */
+  /* The object of many field value properties */
   values: IValues;
 
   /* The field validation error messages */
@@ -49,38 +43,146 @@ export interface IFormState {
 
   formSubmissionStatus: string;
 }
+export interface IFormContext extends IFormState {
+  /* Function that allows values in the values state to be set */
+  setValues: (values: IValues) => void;
 
-export class Form extends React.Component<IFormProps, IFormState> {
-  constructor(props: IFormProps) {
-    super(props);
+  /* Function that validates a field */
+  validate: (fieldName: string) => void;
+}
+export const Form = (props: IFormProps) => {
 
-    const formSubmissionErrors: IErrors  = {};
-    const fieldValidationErrors: IErrors  = {};
-    const values: IValues = {};
-    const formSubmissionStatus: string ="";
+  const [state, setState] = useState({
+    values:{} as IValues,
+    fieldValidationErrors:{} as IErrors,
+    submitSuccess:false,
+    formSubmissionErrors:{} as IErrors,
+    formSubmissionStatus:""
+  })
 
-    this.state = {
-      fieldValidationErrors,
-      values,
-      formSubmissionErrors,
-      formSubmissionStatus
-    };
+
+const setValues = (incomingValues: IValues) => {
+
+
+
+  setState((current) => ( {...current, values: { ...state.values, ...incomingValues }  }));
+
+}
+  /**
+   * Reset form submission state
+   */
+  const resetFormSubmissionState =()=>{
+    setState((current) => ( {...current, formSubmissionErrors: {}  }));
+  }
+
+
+  const setLoading=(text: string)=>{
+    setState((current) => ( {...current, formSubmissionStatus: text  }));
   }
 
   /**
-   * Stores new field values in state
-   * @param {IValues} values - The new field values
+ * Executes the validation rule for the field and updates the form errors
+ * @param {string} fieldName - The field to validate
+ * @returns {string} - The error message
+ */
+const validate = (fieldName: string): string => {
+  let newError: string = "";
+
+  if (
+    props.fields[fieldName] &&
+    props.fields[fieldName].validation
+  ) {
+    newError = props.fields[fieldName].validation!.rule(
+      state.values,
+      fieldName,
+      props.fields[fieldName].validation!.args
+    );
+
+    // if resetting key or endpoint, reset formsubmission error too
+    const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = state;
+    if((fieldName === 'key' || fieldName ==='endpoint')
+      && haveErrors(state.formSubmissionErrors)){
+      resetFormSubmissionState();
+    }
+
+    console.log(`validate 1 newError = ${JSON.stringify(newError)}`);
+  }
+  state.fieldValidationErrors[fieldName] = newError;
+
+  setState((current) => ( {...current, fieldValidationErrors: { ...state.fieldValidationErrors, [fieldName]: newError }  }));
+
+  console.log(`validate 2 newError = ${JSON.stringify(newError)}`);
+  return newError;
+}
+
+  /**
+   * Executes the validation rules for all the fields on the form and sets the error state
+   * @returns {boolean} - Returns true if the form is valid
    */
-  private setValues = (values: IValues) => {
-    this.setState({ values: { ...this.state.values, ...values } });
-  };
+  const validateForm =(): boolean => {
+    const fieldValidationErrors: IErrors = {};
+    Object.keys(props.fields).map((fieldName: string) => {
+      fieldValidationErrors[fieldName] = validate(fieldName);
+    });
+
+    setState((current) => ( {...current, fieldValidationErrors  }));
+
+    return !haveErrors(fieldValidationErrors);
+  }
+
+  /**
+   * Submits the form
+   * @returns {boolean} - Whether the form submission was successful or not
+   */
+  const submitForm = async (values: IValues): Promise<boolean> => {
+    try {
+      const result = await props.submitFunction(values);
+      console.log(`submitForm result ${JSON.stringify(result)}`);
+      return result;
+    } catch (ex) {
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      let errorMessage = ex.message;
+      //let errorMessageParsed = JSON.parse(errorMessage);
+      setState((current) => ( {...current, formSubmissionErrors: { ...state.formSubmissionErrors, ["HTTPResponse"]: errorMessage }  }));
+      console.log(`submitForm error ${JSON.stringify(ex)}`);
+      throw ex;
+    }
+  }
+
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    e.preventDefault();
+
+    console.log(state.values);
+
+    if (validateForm()) {
+      try {
+        setLoading("loading...");
+        const submitSuccess: boolean = await submitForm(state.values);
+        console.log(`handleSubmit ${submitSuccess}`);
+        setState((current) => ( {...current, submitSuccess  }));
+        setLoading("");
+      } catch (err) {
+        console.log(`handleSubmit err ${JSON.stringify(err)}`);
+        const submitSuccess: boolean = false;
+        setState((current) => ( {...current, submitSuccess  }));
+        setLoading("");
+      }
+    }
+
+  }
 
   /**
    * Returns whether there are any errors in the errors object that is passed in
    * @param {IErrors} errors - The field errors
    */
-  private haveErrors(errors: IErrors) {
+  const haveErrors = (errors: IErrors): boolean => {
     let haveError: boolean = false;
+
+    if(!errors) return false;
+
     Object.keys(errors).map((key: string) => {
       if (errors[key] && errors[key].length > 0) {
         haveError = true;
@@ -90,157 +192,52 @@ export class Form extends React.Component<IFormProps, IFormState> {
     return haveError;
   }
 
-
   /**
  * Returns error in the errors object that is passed in
  * @param {IErrors} errors - The field errors
  * @returns {String} errorMessage array
  */
-  private getErrors(errors: IErrors) {
-    let errorMessage: string = "";
+const getErrors = (errors: IErrors):string => {
+  let errorMessage: string = "";
 
-    Object.values(errors).map((value: string) => {
-      if (value.length > 0) {
-        errorMessage += `${value}`;
-      }
-    });
-    return errorMessage;
-  }
+  if(!errors) return errorMessage;
 
-  /**
-   * Reset form submission state
-   */
-  private resetFormSubmissionState(){
-    const formSubmissionErrors: IErrors  = {};
-    this.setState({ formSubmissionErrors });
-  }
-
-
-  private setLoading(text: string){
-    const formSubmissionStatus = text;
-    this.setState({ formSubmissionStatus });
-  }
-  /**
-   * Handles form submission
-   * @param {React.FormEvent<HTMLFormElement>} e - The form event
-   */
-  private handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    e.preventDefault();
-
-    console.log(this.state.values);
-
-    if (this.validateForm()) {
-      try {
-        this.setLoading("loading...");
-        const submitSuccess: boolean = await this.submitForm(this.state.values);
-        console.log(`handleSubmit ${submitSuccess}`);
-        this.setState({ submitSuccess });
-        this.setLoading("");
-      } catch (err) {
-        console.log(`handleSubmit err ${JSON.stringify(err)}`);
-        const submitSuccess: boolean = false;
-        this.setState({ submitSuccess });
-        this.setLoading("");
-      }
+  Object.values(errors).map((value: string) => {
+    if (value.length > 0) {
+      errorMessage += `${value}`;
     }
+  });
+  return errorMessage;
+}
+
+
+
+  console.log(`state = ${JSON.stringify(state)}`);
+  const { submitSuccess, fieldValidationErrors,  formSubmissionErrors, formSubmissionStatus, values} = state;
+
+  const context: IFormContext = {
+    ...state,
+    setValues: setValues,
+    validate: validate
   };
 
-  /**
-   * Executes the validation rules for all the fields on the form and sets the error state
-   * @returns {boolean} - Returns true if the form is valid
-   */
-  private validateForm(): boolean {
-    const fieldValidationErrors: IErrors = {};
-    Object.keys(this.props.fields).map((fieldName: string) => {
-      fieldValidationErrors[fieldName] = this.validate(fieldName);
-    });
-    this.setState({ fieldValidationErrors });
-    return !this.haveErrors(fieldValidationErrors);
-  }
 
-  /**
- * Executes the validation rule for the field and updates the form errors
- * @param {string} fieldName - The field to validate
- * @returns {string} - The error message
- */
-  private validate = (fieldName: string): string => {
-    let newError: string = "";
-
-    if (
-      this.props.fields[fieldName] &&
-      this.props.fields[fieldName].validation
-    ) {
-      newError = this.props.fields[fieldName].validation!.rule(
-        this.state.values,
-        fieldName,
-        this.props.fields[fieldName].validation!.args
-      );
-
-      // if resetting key or endpoint, reset formsubmission error too
-      const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = this.state;
-      if((fieldName === 'key' || fieldName ==='endpoint')
-        && this.haveErrors(this.state.formSubmissionErrors)){
-        this.resetFormSubmissionState();
-      }
-
-      console.log(`validate 1 newError = ${JSON.stringify(newError)}`);
-    }
-    this.state.fieldValidationErrors[fieldName] = newError;
-    this.setState({
-      fieldValidationErrors: { ...this.state.fieldValidationErrors, [fieldName]: newError }
-    });
-    console.log(`validate 2 newError = ${JSON.stringify(newError)}`);
-    return newError;
-  };
-
-  /**
-   * Submits the form
-   * @returns {boolean} - Whether the form submission was successful or not
-   */
-  private async submitForm(values: IValues): Promise<boolean> {
-    try {
-      const result = await this.props.submitFunction(values);
-      console.log(`submitForm result ${JSON.stringify(result)}`);
-      return result;
-    } catch (ex) {
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      let errorMessage = ex.message;
-      //let errorMessageParsed = JSON.parse(errorMessage);
-
-      this.setState({
-        formSubmissionErrors: { ...this.state.formSubmissionErrors, ["HTTPResponse"]: errorMessage }
-      });
-      console.log(`submitForm error ${JSON.stringify(ex)}`);
-      throw ex;
-    }
-  }
-
-  public render() {
-    console.log(`state = ${JSON.stringify(this.state)}`);
-    const { submitSuccess, fieldValidationErrors,  formSubmissionErrors} = this.state;
-    const context: IFormContext = {
-      ...this.state,
-      setValues: this.setValues,
-      validate: this.validate
-    };
-    return (
-      <FormContext.Provider value={context}>
-        <form onSubmit={this.handleSubmit} noValidate={true}>
+  return (
+<FormContext.Provider value={context}>
+        <form onSubmit={handleSubmit} noValidate={true}>
           <div className="container">
-            {this.props.render()}
+            {props.render()}
 
             <div className="form-group">
-              {!this.state.formSubmissionStatus && <button
+              {!state.formSubmissionStatus && <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={this.haveErrors(fieldValidationErrors)}
+                disabled={haveErrors(fieldValidationErrors)}
               >
                 Submit
             </button>}
-            { this.state.formSubmissionStatus &&
-              <div>{this.state.formSubmissionStatus}</div>}
+            { state.formSubmissionStatus &&
+              <div>{state.formSubmissionStatus}</div>}
             </div>
             {submitSuccess && (
               <div className="alert alert-info" role="alert">
@@ -248,21 +245,21 @@ export class Form extends React.Component<IFormProps, IFormState> {
             </div>
             )}
             {submitSuccess === false &&
-              this.haveErrors(this.state.formSubmissionErrors) && (
+              haveErrors(state.formSubmissionErrors) && (
                 <div className="alert alert-danger formSubmissionErrors" role="alert">
-                  {this.getErrors(this.state.formSubmissionErrors)}
+                  {getErrors(state.formSubmissionErrors)}
                 </div>
               )}
             {submitSuccess === false &&
-              this.haveErrors(this.state.fieldValidationErrors) && (
+              haveErrors(state.fieldValidationErrors) && (
                 <div className="alert alert-danger fieldValidationErrors" role="alert">
-                  {this.getErrors(this.state.fieldValidationErrors)}
+                  {getErrors(state.fieldValidationErrors)}
               </div>
               )}
           </div>
         </form>
         <hr></hr>
+        {JSON.stringify(state.values)}
       </FormContext.Provider>
-    );
-  }
+  )
 }

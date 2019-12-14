@@ -16,7 +16,7 @@ export const requiredValidator = (values: IValues, fieldName: string): string =>
   values[fieldName] === undefined ||
     values[fieldName] === null ||
     values[fieldName] === ""
-    ? "This must be populated"
+    ? `${fieldName} must be populated`
     : "";
 
 /**
@@ -30,7 +30,7 @@ export const isEmailValidator = (values: IValues, fieldName: string): string =>
     values[fieldName].search(
       /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     )
-    ? "This must be in a valid email format"
+    ? `${fieldName} must be in a valid email format`
     : "";
 
 /**
@@ -46,7 +46,7 @@ export const withinMaxLengthValidator = (
   length: number
 ): string =>
   values[fieldName] && values[fieldName].length > length
-    ? `This can not exceed ${length} characters`
+    ? `${fieldName} can not exceed ${length} characters`
     : "";
 
 /**
@@ -65,7 +65,7 @@ export const isGuid32CharValidator = (
     values[fieldName] === null ||
     values[fieldName] === "" ) return  `This must be populated`;
 
-    if (values[fieldName].length !== length) return `This must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`;
+    if (values[fieldName].length !== length) return `${fieldName} must be populated with 32 char GUID, expected length = ${length}, received length=${values[fieldName].length}`;
 
     return "";
 }

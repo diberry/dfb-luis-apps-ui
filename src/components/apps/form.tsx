@@ -2,7 +2,7 @@ import * as React from "react";
 import { Form, IFields } from "../form/form";
 import { Field } from "../form/field";
 import { requiredValidator, isGuid32CharValidator } from '../../lib/validators';
-import { IValues } from '../../lib/validators';
+import { IValues } from '../../lib/values';
 
 interface IProps {
   submit: (values: IValues) => Promise<any>;
