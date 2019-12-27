@@ -3,7 +3,8 @@ import { IValues } from './values';
 import { Luis } from './luis_get';
 export interface ILuisAppsDataTable {
   apps: ILuisApp[],
-  columns: ILuisDataTableAppColumn[]
+  columns: ILuisDataTableAppColumn[],
+  onClickRow: any
 }
 export interface ILuisDataTableAppColumn {
   Header: string,
@@ -12,7 +13,11 @@ export interface ILuisDataTableAppColumn {
 
 export class LuisAppDataTable {
 
-  static async getLuisApps(values: IValues, features: IFeatureFlags): Promise<ILuisApp[]> {
+  static async getData(values: IValues, features: IFeatureFlags): Promise<ILuisApp[]> {
+
+    if(!values || Object.keys(values).length===0){
+      throw new Error("getLuisApps - values are empty");
+    }
 
     if (!values.key || values.key === undefined || values.key === null || values.key === "") {
       throw new Error("getLuisApps - empty values.key");
@@ -46,6 +51,11 @@ export class LuisAppDataTable {
       accessor: 'createdDateTime'
     }];
   }
+  static rowLevelNavigation(rowId: string){
+    console.log(`rowLevelNagivation called with values = ${JSON.stringify(rowId)}`);
+
+    // navigate to versions page
+  }
   static async getAppDataTable(values: IValues, features: IFeatureFlags): Promise<ILuisAppsDataTable> {
 
     try {
@@ -56,12 +66,14 @@ export class LuisAppDataTable {
 
       console.log(`values = ${JSON.stringify(values)}`);
 
-      const list: ILuisApp[] = await LuisAppDataTable.getLuisApps(values, features);
+      let list: ILuisApp[] = await LuisAppDataTable.getData(values, features);
+
       const columns: Array<ILuisDataTableAppColumn> = LuisAppDataTable.getAppColumns();
 
       return {
         apps: list,
-        columns: columns
+        columns: columns,
+        onClickRow: LuisAppDataTable.rowLevelNavigation
       };
     } catch (err) {
       throw err;

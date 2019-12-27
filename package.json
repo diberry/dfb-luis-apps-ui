@@ -26,7 +26,7 @@
     "tslist": "tsc --listFiles",
     "jslist": "jest --listfiles",
     "updateSnapshot": "npm test -- -u"
-  },
+},
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -43,9 +43,9 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^24.0.23",
+    "@types/jest": "^24.0.24",
     "@types/react-test-renderer": "^16.9.1",
-    "concurrently": "^5.0.0",
+    "concurrently": "^5.0.2",
     "react-test-renderer": "^16.12.0",
     "ts-jest": "^24.2.0"
   }

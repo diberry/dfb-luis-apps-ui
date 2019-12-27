@@ -7,17 +7,49 @@ import { IValues } from './lib/values';
 
 const App: React.FC = () => {
 
-  const [tableData, setTableData] = useState({ apps: [] as ILuisApp[], columns: [] as ILuisDataTableAppColumn[] });
+  const test = true;
+
+  const [tableData, setTableData] = useState({
+    apps: [] as ILuisApp[],
+    columns: [] as ILuisDataTableAppColumn[],
+    onClickRow: undefined
+  });
+
+  const appFlags: IValues = {
+    test: true,
+    loadData: true
+  }
+
   const getTableData = async (values: IValues): Promise<any> => {
-    setTableData({ apps: [] as ILuisApp[], columns: [] as ILuisDataTableAppColumn[] });
 
-    const features: IFeatureFlags = {
-      versions: true,
-      models: true,
-    };
+    // initialize
+      setTableData({
+        apps: [] as ILuisApp[],
+        columns: [] as ILuisDataTableAppColumn[],
+        onClickRow: undefined
+      });
 
-    const tableData: ILuisAppsDataTable = await LuisAppDataTable.getAppDataTable(values, features);
-    setTableData(tableData);
+      const features: IFeatureFlags = {
+        versions: true,
+        models: true
+      };
+
+      let tableData: ILuisAppsDataTable = {
+        apps: [],
+        columns: [],
+        onClickRow: undefined
+      };
+
+      if (!test){
+        tableData = await LuisAppDataTable.getAppDataTable(values, features);
+      } else {
+        tableData = require('./tableData.json');
+        tableData.onClickRow =  LuisAppDataTable.rowLevelNavigation
+      }
+
+      console.log(JSON.stringify(tableData));
+
+      setTableData(tableData);
   }
 
   return (

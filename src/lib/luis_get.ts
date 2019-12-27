@@ -6,6 +6,10 @@ export class Luis {
 
 static async getLuisApps(values: IValues, features: IFeatureFlags): Promise<ILuisApp[]> {
 
+    if(!values || Object.keys(values).length===0){
+      throw new Error("getLuisApps - values are empty");
+    }
+
     if(!values.key || values.key===undefined || values.key===null || values.key===""){
       throw new Error("getLuisApps - empty values.key");
     }
