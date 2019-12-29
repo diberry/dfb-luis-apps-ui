@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import AppInfo from './appsDataTable';
+import AppInfo from './appInfo/appInfo';
+import AppInfoVersions from './appInfoVersions/appInfoVersions';
+import DataTableLuis from './appsDataTable';
 import { ILuisAppsDataTable } from "../../lib/luis_apps";
 import { FormLuisAuth } from './form';
-import { IValues} from '../../lib/values';
+import { IValues, IDataTable } from '../../lib/values';
 
 import { ILuisApp, ILuisAppVersion } from 'dfb-luis-apps-lib';
 
@@ -12,29 +14,19 @@ interface IProps {
   onSubmit: (values: IValues) => Promise<any>;
 }
 
-interface ILuisAppDataTable {
-
-}
-
 const Apps: React.FC<IProps> = (props: IProps) => {
 
   const [selectedData, setSelectedData] = useState({
-    appSelected: {} as ILuisApp,
-    versionSelected: "" as string,
-    modelSelected: "" as string
+    appSelected: {} as ILuisApp
   })
 
-  const setSelectedApp = (appId: string) =>{
+  const setSelectedApp = (appId: string) => {
 
     console.log(`appId = ${appId}`);
 
-    const selectedApp = Object.assign(props.tableData.apps.filter(app => app.id === appId))[0];
+    const appSelected = Object.assign(props.tableData.apps.filter(x => x.id === appId)[0]);
 
-    setSelectedData({
-      appSelected: selectedApp,
-      versionSelected: selectedData.versionSelected,
-      modelSelected: selectedData.modelSelected
-    });
+    setSelectedData({appSelected});
   }
 
   return (
@@ -42,11 +34,13 @@ const Apps: React.FC<IProps> = (props: IProps) => {
       <FormLuisAuth
         submit={props.onSubmit}
       />
-      <div>App: {selectedData.appSelected.name}</div>
-      <AppInfo
-      tableData={props.tableData}
-      selectedAppFn={setSelectedApp}/>
 
+      <DataTableLuis
+        tableData={props.tableData}
+        selectedAppFn={setSelectedApp} />
+
+      <AppInfo app={selectedData.appSelected} />
+      <AppInfoVersions versions={selectedData.appSelected.versions} />
     </div>
   )
 
